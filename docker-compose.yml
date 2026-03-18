@@ -1,9 +1,7 @@
-version: "3.7"
-
 x-logging: &loki-logging
   driver: json-file
   options:
-    tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"    
+    tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
 
 services:
   loki:
@@ -13,8 +11,6 @@ services:
     volumes:
       - ./config/loki/loki-config.yaml:/mnt/config/loki-config.yaml
     command: -config.file=/mnt/config/loki-config.yaml
-    networks:
-      - loki
     logging: *loki-logging  
 
   promtail:
@@ -23,9 +19,7 @@ services:
       - ./config/loki/promtail-config.yaml:/mnt/config/promtail-config.yaml
       - /var/lib/docker/containers:/host/containers
     command: -config.file /mnt/config/promtail-config.yaml
-    networks:
-      - loki
-    logging: *loki-logging  
+    logging: *loki-logging
 
   grafana:
     image: grafana/grafana:11.0.0
@@ -34,11 +28,9 @@ services:
     volumes: 
       - grafana-data:/var/lib/grafana
       - ./config/grafana/provisioning/:/etc/grafana/provisioning/
-    networks:
-      - loki
     environment:
-      GF_SECURITY_ADMIN_PASSWORD: testloki
-    logging: *loki-logging    
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-testloki}
+    logging: *loki-logging
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -56,9 +48,7 @@ services:
         - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     environment:
         - RABBITMQ_DEFAULT_USER=admin
-        - RABBITMQ_DEFAULT_PASS=passw123
-    networks:
-        - rabbitmq_go_net
+        - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-passw123}
 
   api-rest:
     build:
@@ -70,17 +60,9 @@ services:
       rabbitmq:
         condition: service_healthy
     restart: on-failure
-    networks:
-      - loki
-      - rabbitmq_go_net
     logging: *loki-logging
 
 volumes:
   grafana-data: 
-
-networks:
-  loki:
-  rabbitmq_go_net:
-    driver: bridge
 
 
