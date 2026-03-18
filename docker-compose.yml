@@ -7,9 +7,9 @@ x-logging: &loki-logging
 
 services:
   loki:
-    image: grafana/loki:2.2.1
+    image: grafana/loki:3.0.0
     ports:
-      - "3100"
+      - "3100:3100"
     volumes:
       - ./config/loki/loki-config.yaml:/mnt/config/loki-config.yaml
     command: -config.file=/mnt/config/loki-config.yaml
@@ -18,7 +18,7 @@ services:
     logging: *loki-logging  
 
   promtail:
-    image: grafana/promtail:2.2.1
+    image: grafana/promtail:3.0.0
     volumes:
       - ./config/loki/promtail-config.yaml:/mnt/config/promtail-config.yaml
       - /var/lib/docker/containers:/host/containers
@@ -28,7 +28,7 @@ services:
     logging: *loki-logging  
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:11.0.0
     ports:
       - "3000:3000"
     volumes: 
@@ -40,17 +40,47 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: testloki
     logging: *loki-logging    
 
-  demo-app:
-    image: ealen/echo-server
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    healthcheck:
+        test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    environment:
+        - RABBITMQ_DEFAULT_USER=admin
+        - RABBITMQ_DEFAULT_PASS=passw123
+    networks:
+        - rabbitmq_go_net
+
+  api-rest:
+    build:
+      context: ~/Developer/python-api
+      dockerfile: Dockerfile
     ports: 
-        - "3001:80"   
+        - "5000:5000"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
     networks:
       - loki
-    logging: *loki-logging  
+      - rabbitmq_go_net
+    logging: *loki-logging
 
 volumes:
   grafana-data: 
 
 networks:
   loki:
+  rabbitmq_go_net:
+    driver: bridge
+
 
