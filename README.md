@@ -47,11 +47,14 @@ docker compose up -d
 - **Logs centralizados** com Loki + Promtail + Grafana
 - **Métricas de aplicação** com `prometheus_client` (Flask)
 - **Métricas de infraestrutura** com cAdvisor (CPU/RAM por container)
-- **Comunicação síncrona** via REST (`POST /message`)
-- **Comunicação assíncrona** via RabbitMQ (fanout exchange)
+- **Comunicação síncrona** via REST (`POST /message`, `POST /task`)
+- **Comunicação assíncrona** via RabbitMQ
+- **Pub/Sub vs Work Queue** — fanout exchange (todos recebem) vs direct exchange (um processa)
 - **Backpressure & Load Shifting** com filas duráveis
 - **Escalabilidade horizontal** — `docker compose up --scale api-rest=N`
-- **Health Checks** — Liveness (`/health/live`) e Readiness (`/health/ready`)
+- **Health Checks** — Liveness (`/health/live`) e Readiness (`/health/ready`) com estado do Circuit Breaker
+- **Circuit Breaker** — `pybreaker` abre o circuito após 3 falhas, protegendo de cascatas de erro
+- **Retry com Backoff Exponencial** — consumer retenta 3x (1s → 2s → 4s) antes de enviar para DLQ
 - **Dead Letter Queue (DLQ)** — mensagens com erro vão para `logs_dlq`
 - **Idempotência** — consumer descarta duplicatas via `correlationId`
 - **Distributed Tracing** — rastreie uma mensagem de ponta a ponta pelo `correlationId` no Grafana
