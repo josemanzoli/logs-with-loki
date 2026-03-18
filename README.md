@@ -1,18 +1,20 @@
-# Observability Lab: Loki, Grafana, Prometheus & RabbitMQ
+# Observability Lab: Loki, Grafana, Prometheus, Tempo & RabbitMQ
 
-Laboratório de observabilidade e mensageria para uso em aulas de **Arquitetura de Microsserviços**. Este projeto demonstra na prática conceitos como logs centralizados, métricas, comunicação assíncrona, backpressure, escalabilidade horizontal e muito mais.
+Laboratório de observabilidade e mensageria para uso em aulas de **Arquitetura de Microsserviços**. Este projeto demonstra na prática conceitos como logs centralizados, métricas, distributed tracing, comunicação assíncrona, resiliência e persistência.
 
 ## Stack
 
 | Serviço | Função |
 |---|---|
 | **Loki** | Agregação e armazenamento de logs |
-| **Promtail** | Coleta de logs dos containers e encaminha ao Loki |
-| **Grafana** | Visualização de logs e métricas |
+| **Grafana** | Visualização de logs, métricas e traces |
 | **Prometheus** | Coleta e armazenamento de métricas |
+| **Tempo** | Armazenamento de traces distribuídos (OTLP) |
+| **PostgreSQL** | Persistência de dados das mensagens processadas |
 | **cAdvisor** | Exporta métricas de hardware/CPU/RAM dos containers |
 | **RabbitMQ** | Message broker (comunicação assíncrona) |
-| **Python API** | API REST Flask — produz mensagens e expõe `/metrics` |
+| **Python API** | API REST Flask — produz mensagens e expõe métricas/traces |
+| **Python Consumer** | Worker assíncrono — consome, persiste e gera traces |
 
 ## Pré-requisitos
 
@@ -37,44 +39,40 @@ docker compose up -d
 |---|---|---|
 | **Grafana** | http://localhost:3000 | admin / `GRAFANA_PASSWORD` do `.env` |
 | **Prometheus** | http://localhost:9090 | — |
+| **Tempo (API)** | http://localhost:3200 | — |
 | **RabbitMQ Management** | http://localhost:15672 | admin / `RABBITMQ_PASSWORD` do `.env` |
 | **cAdvisor** | http://localhost:8080 | — |
-| **API Health** | http://localhost:5000/health/live | — |
-| **API Metrics** | http://localhost:5000/metrics | — |
+| **API Endpoints** | http://localhost:5000/messages | — |
 
 ## Tópicos cobertos na aula
 
 - **Logs centralizados** com Loki + Promtail + Grafana
+- **Distributed Tracing** com **Grafana Tempo** — rastreie o fluxo completo (API → RabbitMQ → Consumer)
+- **Trace-to-Logs** — Pule de um trace no Tempo diretamente para os logs no Loki usando o `correlationId`
 - **Métricas de aplicação** com `prometheus_client` (Flask)
 - **Métricas de infraestrutura** com cAdvisor (CPU/RAM por container)
-- **Comunicação síncrona** via REST (`POST /message`, `POST /task`)
-- **Comunicação assíncrona** via RabbitMQ
-- **Pub/Sub vs Work Queue** — fanout exchange (todos recebem) vs direct exchange (um processa)
-- **Backpressure & Load Shifting** com filas duráveis
-- **Escalabilidade horizontal** — `docker compose up --scale api-rest=N`
-- **Health Checks** — Liveness (`/health/live`) e Readiness (`/health/ready`) com estado do Circuit Breaker
-- **Circuit Breaker** — `pybreaker` abre o circuito após 3 falhas, protegendo de cascatas de erro
-- **Retry com Backoff Exponencial** — consumer retenta 3x (1s → 2s → 4s) antes de enviar para DLQ
-- **Dead Letter Queue (DLQ)** — mensagens com erro vão para `logs_dlq`
-- **Idempotência** — consumer descarta duplicatas via `correlationId`
-- **Distributed Tracing** — rastreie uma mensagem de ponta a ponta pelo `correlationId` no Grafana
+- **Persistência SQL** — Mensagens salvas em **PostgreSQL** via worker assíncrono
+- **Comunicação assíncrona** via RabbitMQ (DLQ, Retry com Backoff, Idempotência)
+- **Resiliência (Circuit Breaker)** — Proteção de falhas em cascata com `pybreaker`
+- **Health Checks Profundos** — Liveness e Readiness probes integradas ao estado do circuito
 
 ## Estrutura do projeto
 
 ```
 logs-with-loki/
 ├── config/
-│   ├── grafana/provisioning/datasources/   # Datasources automáticos (Loki + Prometheus)
-│   ├── loki/                               # Configuração do Loki
-│   ├── promtail/                           # Configuração do Promtail
-│   └── prometheus/                         # Configuração do Prometheus + cAdvisor
+│   ├── grafana/provisioning/  # Datasources automáticos (Loki, Prometheus, Tempo)
+│   ├── loki/                  # Configuração do Loki
+│   ├── promtail/              # Configuração do Promtail
+│   ├── prometheus/            # Scrape config p/ API e cAdvisor
+│   └── tempo/                 # Configuração de armazenamento de traces
 ├── docker-compose.yml
-└── .env                                    # Variáveis de ambiente (não commitado)
+└── .env                       # Variáveis de ambiente (não commitado)
 ```
 
 ## Repositórios Relacionados
 
-- **[josemanzoli/python-api](https://github.com/josemanzoli/python-api)** — API REST Flask com RabbitMQ producer e consumer, instrumentada com Prometheus. Usada como serviço de aplicação neste laboratório.
+- **[josemanzoli/python-api](https://github.com/josemanzoli/python-api)** — Repositório da aplicação usada neste laboratório. Contém a lógica de negócio, instrumentação OTel e modelos SQL.
 
 ## Créditos
 
@@ -82,7 +80,7 @@ Este projeto foi baseado no trabalho original de **Bruno Paz**:
 - Repositório: [brpaz/logs-with-loki](https://github.com/brpaz/logs-with-loki)
 - Artigo: [Better docker logs with Loki](https://brunopaz.dev/blog/better-docker-logs-with-loki)
 
-Modificado e expandido por **Jose Manzoli** com modernização da stack, adição de RabbitMQ, Python API, Prometheus, cAdvisor e exemplos de arquitetura de microsserviços.
+Modificado e expandido por **Jose Manzoli** com modernização da stack, adição de RabbitMQ, PostgreSQL, Grafana Tempo, OpenTelemetry e exemplos práticos de padrões de microsserviços.
 
 ## License
 
