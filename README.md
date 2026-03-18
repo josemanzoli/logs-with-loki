@@ -69,6 +69,10 @@ logs-with-loki/
 └── .env                                    # Variáveis de ambiente (não commitado)
 ```
 
+## Repositórios Relacionados
+
+- **[josemanzoli/python-api](https://github.com/josemanzoli/python-api)** — API REST Flask com RabbitMQ producer e consumer, instrumentada com Prometheus. Usada como serviço de aplicação neste laboratório.
+
 ## Créditos
 
 Este projeto foi baseado no trabalho original de **Bruno Paz**:
