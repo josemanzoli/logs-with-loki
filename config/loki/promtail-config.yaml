@@ -9,13 +9,6 @@ clients:
   - url: http://loki:3100/loki/api/v1/push
 
 scrape_configs:
-  # - job_name: system
-  #   static_configs:
-  #     - targets:
-  #         - localhost
-  #       labels:
-  #         job: varlogs
-  #         __path__: /var/log/*log
   - job_name: docker
     static_configs:
       - targets:
@@ -24,27 +17,38 @@ scrape_configs:
           job: dockerlogs
           __path__: /host/containers/*/*log
     pipeline_stages:
+      # 1. Parse inicial do JSON do Docker
       - json:
           expressions:
             output: log
             stream: stream
-            attrs:
+
+      # 2. Tentar parsear o conteúdo da aplicação (logger.py)
       - json:
           expressions:
-            tag:
-          source: attrs
-      - regex:
-          expression: (?P<image_name>(?:[^|]*[^|])).(?P<container_name>(?:[^|]*[^|])).(?P<image_id>(?:[^|]*[^|])).(?P<container_id>(?:[^|]*[^|]))
-          source: tag
-      - timestamp:
-          format: RFC3339Nano
-          source: time
+            level: level
+            loggerName: loggerName
+            correlationId: correlationId
+            traceId: traceId
+          source: output
+
+      # 3. Criar a label is_app baseada na existência do loggerName
+      - template:
+          source: is_app
+          template: '{{ if .loggerName }}true{{ else }}false{{ end }}'
+
+      # 4. Promover labels (Baixa cardinalidade)
       - labels:
-          tag:
+          level:
+          is_app:
           stream:
-          image_name:
-          container_name:
-          image_id:
-          container_id:
+
+      # 5. Metadados estruturados (Alta cardinalidade - Loki 3.0)
+      - structured_metadata:
+          correlationId:
+          traceId:
+          loggerName:
+
+      # 6. Limpeza da saída
       - output:
           source: output

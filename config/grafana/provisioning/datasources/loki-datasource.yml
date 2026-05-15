@@ -9,8 +9,16 @@ datasources:
     jsonData:
       maxLines: 1000
       derivedFields:
+        # Nível 3: Link Técnico (Trace ID gerado pelo OpenTelemetry)
         - datasourceUid: tempo
           matcherRegex: '"traceId":\s*"([a-f0-9]{32})"'
-          name: "Open Trace in Tempo"
+          name: "🔍 Debug: View Technical Trace"
           url: "$${__value.raw}"
+          internalLinkEnabled: true
+        
+        # Nível 3: Link de Negócio (Correlation ID do Payload)
+        - datasourceUid: tempo
+          matcherRegex: '"correlationId":\s*"([^"]+)"'
+          name: "💼 Support: Search Business Flow"
+          url: '{ .messaging.correlation_id = "$${__value.raw}" }'
           internalLinkEnabled: true

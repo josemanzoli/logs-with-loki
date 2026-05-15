@@ -6,6 +6,13 @@ scrape_configs:
     static_configs:
       - targets: ['api-rest:5000']
   
+  - job_name: 'consumers'
+    dns_sd_configs:
+      - names:
+          - 'consumer'
+        type: 'A'
+        port: 8000
+
   - job_name: 'cadvisor'
     static_configs:
       - targets: ['cadvisor:8080']
