@@ -11,7 +11,7 @@ services:
     volumes:
       - ./config/loki/loki-config.yaml:/mnt/config/loki-config.yaml
     command: -config.file=/mnt/config/loki-config.yaml
-    logging: *loki-logging  
+    logging: *loki-logging
 
   promtail:
     image: grafana/promtail:3.0.0
@@ -25,7 +25,7 @@ services:
     image: grafana/grafana:11.0.0
     ports:
       - "3000:3000"
-    volumes: 
+    volumes:
       - grafana-data:/var/lib/grafana
       - ./config/grafana/provisioning/:/etc/grafana/provisioning/
     environment:
@@ -46,9 +46,9 @@ services:
     image: grafana/tempo:2.4.1
     command: -config.file=/etc/tempo.yml
     ports:
-      - "3200:3200"  # HTTP API
-      - "4317:4317"  # OTLP gRPC
-      - "4318:4318"  # OTLP HTTP
+      - "3200:3200" # HTTP API
+      - "4317:4317" # OTLP gRPC
+      - "4318:4318" # OTLP HTTP
     volumes:
       - ./config/tempo/tempo.yml:/etc/tempo.yml
       - tempo-data:/var/tempo
@@ -66,7 +66,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin} -d ${POSTGRES_DB:-messages_db}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin} -d ${POSTGRES_DB:-messages_db}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -92,26 +92,26 @@ services:
     image: rabbitmq:3-management-alpine
     container_name: 'rabbitmq'
     ports:
-        - 5672:5672
-        - 15672:15672
+      - 5672:5672
+      - 15672:15672
     healthcheck:
-        test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
-        interval: 30s
-        timeout: 10s
-        retries: 5
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
     volumes:
-        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
-        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     environment:
-        - RABBITMQ_DEFAULT_USER=admin
-        - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-passw123}
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-passw123}
 
   api-rest:
     build:
-      context: ~/Developer/python-api
+      context: ../python-api
       dockerfile: Dockerfile
-    ports: 
-        - "5000:5000"
+    ports:
+      - "5000:5000"
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -128,9 +128,9 @@ services:
 
   consumer:
     build:
-      context: ~/Developer/python-api
+      context: ../python-api
       dockerfile: Dockerfile
-    command: ["python", "consumer.py"]
+    command: [ "python", "consumer.py" ]
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -142,6 +142,9 @@ services:
       - POSTGRES_HOST=postgres
       - POSTGRES_DB=${POSTGRES_DB:-messages_db}
       - TEMPO_ENDPOINT=http://tempo:4317
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq/
+      - rabbitmq-log:/var/log/rabbitmq
     restart: on-failure
     logging: *loki-logging
 
@@ -149,5 +152,6 @@ volumes:
   grafana-data:
   tempo-data:
   postgres-data:
-
+  rabbitmq-data:
+  rabbitmq-log:
 
