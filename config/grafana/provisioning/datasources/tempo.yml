@@ -24,3 +24,11 @@ datasources:
         enabled: true
       search:
         hide: false
+    metrics_generator:
+      registry:
+        external_labels:
+          source: tempo
+      storage:
+        path: /var/tempo/wal
+        remote_write:
+          - url: http://prometheus:9090/api/v1/write

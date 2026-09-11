@@ -1,0 +1,227 @@
+{
+	"info": {
+		"_postman_id": "8b9e64e5-961d-44a7-8149-fb39e8fdc829",
+		"name": "Observability & Messaging Lab (Loki/Tempo/RabbitMQ)",
+		"description": "Collection do Postman para testes rápidos na API REST do Laboratório de Arquitetura de Microsserviços.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Checks",
+			"item": [
+				{
+					"name": "Liveness Probe",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/health/live",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"health",
+								"live"
+							]
+						},
+						"description": "Verifica se a API Flask está rodando na máquina (Liveness)."
+					},
+					"response": []
+				},
+				{
+					"name": "Readiness Probe",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/health/ready",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"health",
+								"ready"
+							]
+						},
+						"description": "Verifica se os recursos downstream (Postgres, RabbitMQ) estão de fato conectados e prontos para processar."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Messaging Endpoints",
+			"item": [
+				{
+					"name": "Publish Message (Pub/Sub Fanout)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.correlationId) {",
+									"    pm.environment.set(\"lastCorrelationId\", jsonData.correlationId);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Mensagem do Postman\",\n    \"messageNumber\": {{$randomInt}}\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/message",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"message"
+							]
+						},
+						"description": "Publica uma mensagem no exchange 'logs' (fanout), que encaminha para todos os consumers interessados."
+					},
+					"response": []
+				},
+				{
+					"name": "Publish Task (Work Queue Direct)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Tarefa do Postman\",\n    \"taskNumber\": {{$randomInt}}\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/task",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"task"
+							]
+						},
+						"description": "Envia um payload no exchange 'tasks' (direct) para o modelo de Work Queue (processamento distribuído em round-robin)."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Database Queries",
+			"item": [
+				{
+					"name": "Get All Messages (Postgres)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/messages",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"messages"
+							]
+						},
+						"description": "Retorna todas as mensagens persistidas com sucesso no banco de dados relacional PostgreSQL."
+					},
+					"response": []
+				},
+				{
+					"name": "Find Message By Correlation ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/messages/{{lastCorrelationId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"messages",
+								"{{lastCorrelationId}}"
+							]
+						},
+						"description": "Busca dados de uma mensagem específica no banco de dados usando o Correlation ID gerado anteriormente."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Application Metrics (Prometheus)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/metrics",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"metrics"
+					]
+				},
+				"description": "Exibe o dump das métricas da aplicação no padrão Prometheus para coleta do agente."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "lastCorrelationId",
+			"value": "b2a51119-7e50-4f49-88dc-fc5561e41561",
+			"type": "string"
+		}
+	]
+}
