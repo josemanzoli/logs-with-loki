@@ -20,6 +20,11 @@ scrape_configs:
         type: 'A'
         port: 8001
 
+  - job_name: 'rabbitmq'
+    metrics_path: /metrics/per-object
+    static_configs:
+      - targets: ['rabbitmq:15692']
+
   - job_name: 'cadvisor'
     static_configs:
       - targets: ['cadvisor:8080']

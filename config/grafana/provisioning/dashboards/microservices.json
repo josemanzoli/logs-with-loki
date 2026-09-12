@@ -356,143 +356,460 @@
           "refId": "B"
         }
       ],
-"interval": "1m",
-       "title": "Consumer Message Throughput",
-       "type": "timeseries"
-     },
-     {
-       "datasource": {
-         "type": "prometheus",
-         "uid": "prometheus"
-       },
-       "fieldConfig": {
-         "defaults": {
-           "color": {
-             "mode": "thresholds"
-           },
-           "thresholds": {
-             "mode": "absolute",
-             "values": [
-               {
-                 "color": "blue",
-                 "value": null
-               },
-               {
-                 "color": "green",
-                 "value": 1
-               }
-             ]
-           },
-           "unit": "none",
-           "mappings": []
-         }
-       },
-       "gridPos": {
-         "h": 8,
-         "w": 6,
-         "x": 0,
-         "y": 8
-       },
-       "id": 28,
-       "options": {
-         "orientation": "auto",
-         "reduceOptions": {
-           "calcs": [
-             "lastNotNull"
-           ],
-           "fields": "",
-           "values": false
-         },
-         "showThresholdLabels": false,
-         "showThresholdMarkers": true
-       },
-       "targets": [
-         {
-           "datasource": {
-             "type": "prometheus",
-             "uid": "prometheus"
-           },
-           "expr": "count(up{job=\"task-consumers\"})",
-           "legendFormat": "Active Task Replicas",
-           "refId": "A"
-         }
-       ],
-       "title": "Task Consumer Replicas",
-       "type": "gauge"
-     },
-     {
-       "datasource": {
-         "type": "prometheus",
-         "uid": "prometheus"
-       },
-       "fieldConfig": {
-         "defaults": {
-           "color": {
-             "mode": "palette-classic"
-           },
-           "custom": {
-             "drawStyle": "line",
-             "fillOpacity": 15,
-             "lineWidth": 2,
-             "showPoints": "auto"
-           },
-           "unit": "short",
-           "mappings": []
-         }
-       },
-       "gridPos": {
-         "h": 8,
-         "w": 18,
-         "x": 6,
-         "y": 8
-       },
-       "id": 29,
-       "options": {
-         "legend": {
-           "calcs": [
-             "sum",
-             "last"
-           ],
-           "displayMode": "table",
-           "placement": "bottom",
-           "showLegend": true
-         },
-         "tooltip": {
-           "mode": "multi",
-           "sort": "none"
-         }
-       },
-       "targets": [
-         {
-           "datasource": {
-             "type": "prometheus",
-             "uid": "prometheus"
-           },
-           "expr": "sum(rate(tasks_processed_total[1m]))",
-           "legendFormat": "Total Task Processing Rate",
-           "refId": "A"
-         },
-         {
-           "datasource": {
-             "type": "prometheus",
-             "uid": "prometheus"
-           },
-           "expr": "rate(tasks_processed_total[1m])",
-           "legendFormat": "Replica {{instance}}",
-           "refId": "B"
-         }
-       ],
-       "interval": "1m",
-       "title": "Task Consumer Message Throughput",
-       "type": "timeseries"
-     },
-     {
+      "interval": "1m",
+      "title": "Consumer Message Throughput",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "values": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none",
+          "mappings": []
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 16
+      },
+      "id": 28,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "count(up{job=\"task-consumers\"})",
+          "legendFormat": "Active Task Replicas",
+          "refId": "A"
+        }
+      ],
+      "title": "Task Consumer Replicas",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "lineWidth": 2,
+            "showPoints": "auto"
+          },
+          "unit": "short",
+          "mappings": []
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 18,
+        "x": 6,
+        "y": 16
+      },
+      "id": 29,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(rate(tasks_processed_total[1m]))",
+          "legendFormat": "Total Task Processing Rate",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "rate(tasks_processed_total[1m])",
+          "legendFormat": "Replica {{instance}}",
+          "refId": "B"
+        }
+      ],
+      "interval": "1m",
+      "title": "Task Consumer Message Throughput",
+      "type": "timeseries"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 16
+        "y": 24
+      },
+      "id": 30,
+      "title": "🚨 DLQ & Errors",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "values": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.01
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none",
+          "mappings": []
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 25
+      },
+      "id": 31,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(rate(messages_processing_errors_total[1m]))",
+          "legendFormat": "Consumer errors/s (total)",
+          "refId": "A"
+        }
+      ],
+      "title": "Consumer Processing Errors Rate",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "values": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.01
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none",
+          "mappings": []
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 25
+      },
+      "id": 32,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(rate(task_processing_errors_total[1m]))",
+          "legendFormat": "Task errors/s (total)",
+          "refId": "A"
+        }
+      ],
+      "title": "Task Consumer Processing Errors Rate",
+      "type": "gauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 33,
+      "title": "📊 RabbitMQ Queue Metrics",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "auto"
+          },
+          "unit": "none",
+          "mappings": []
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 34
+      },
+      "id": 34,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "rabbitmq_queue_messages_ready{vhost=\"/\", queue=\"logs_queue\"}",
+          "legendFormat": "logs_queue (ready)",
+          "refId": "A"
+        }
+      ],
+      "title": "logs_queue Messages Ready",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "auto"
+          },
+          "unit": "none",
+          "mappings": []
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 34
+      },
+      "id": 35,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "rabbitmq_queue_messages_ready{vhost=\"/\", queue=\"tasks_queue\"}",
+          "legendFormat": "tasks_queue (ready)",
+          "refId": "A"
+        }
+      ],
+      "title": "tasks_queue Messages Ready",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "auto"
+          },
+          "unit": "none",
+          "mappings": []
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 34
+      },
+      "id": 36,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "rabbitmq_queue_messages_ready{vhost=\"/\", queue=\"logs_dlq\"}",
+          "legendFormat": "logs_dlq (ready)",
+          "refId": "A"
+        }
+      ],
+      "title": "logs_dlq Messages Ready",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 42
       },
       "id": 4,
       "title": "🖥️ Infrastructure (cAdvisor)",
@@ -522,7 +839,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 17
+        "y": 43
       },
       "id": 5,
       "options": {
@@ -577,7 +894,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 17
+        "y": 43
       },
       "id": 6,
       "options": {
@@ -614,7 +931,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 51
       },
       "id": 7,
       "title": "📋 Logs (Loki)",
@@ -629,7 +946,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 52
       },
       "id": 8,
       "options": {
@@ -661,7 +978,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 64
       },
       "id": 9,
       "title": "🔍 Distributed Tracing (Tempo)",
@@ -676,7 +993,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 65
       },
       "id": 10,
       "options": {
@@ -693,7 +1010,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 51
+        "y": 77
       },
       "id": 16,
       "title": "⏱️ APM: Slowest Consumed Messages (PostgreSQL)",
@@ -792,7 +1109,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 52
+        "y": 78
       },
       "id": 17,
       "options": {
@@ -839,6 +1156,6 @@
   "timezone": "",
   "title": "Microservices Observability",
   "uid": "microservices-obs",
-  "version": 4,
+  "version": 6,
   "weekStart": ""
 }

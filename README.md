@@ -56,6 +56,8 @@ docker compose up -d
 - **Comunicação assíncrona** via RabbitMQ (DLQ, Retry com Backoff, Idempotência)
 - **Resiliência (Circuit Breaker)** — Proteção de falhas em cascata com `pybreaker`
 - **Health Checks Profundos** — Liveness e Readiness probes integradas ao estado do circuito
+- **Painel de DLQ e Erros** — visualiza taxas de erro dos consumers e dead letter queue no Grafana
+- **Métricas de Filas RabbitMQ** — visualiza o tamanho das filas (logs, tasks e DLQ) em tempo real no Grafana
 
 ## Estrutura do projeto
 
