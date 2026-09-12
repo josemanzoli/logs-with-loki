@@ -155,11 +155,7 @@ Abaixo, cada tópico listado no README do `logs-with-loki` e o status real no c�
 | # | Sugestão | Justificativa |
 |---|---|---|
 | 6 | **Idempotência in-memory não sobrevive a restart** | O `processed_messages = set()` perde tudo se o container reinicia. Excelente para explicar em aula: "Em produção, usaria Redis ou consulta no Postgres". Está comentado no código mas vale reforçar na aula. |
-| 7 | ✅ **Work Queue sem consumer — resolvido** | Foi criado [task_consumer.py](file:///Users/manza/Developer/python-api/task_consumer.py) + serviço `task-consumer` no [docker-compose.yml](file:///Users/manza/Developer/logs-with-loki/docker-compose.yml), que consume a `tasks_queue` com round-robin. Pub/Sub e Work Queue agora têm consumers próprios; métricas do task consumer (porta 8001) com painel de replicas/throughput no dashboard. |
 | 8 | **Dockerfile CMD usa `flask run`** mas o `app.py` usa `app_instance.run()` | O CMD do Dockerfile chama `flask run` que precisa da env var `FLASK_APP=app`. Porém o tracing e init_db são feitos dentro de `create_app()` chamado pelo `if __name__`. Com `flask run`, o Flask usa a factory automaticamente se encontra `create_app()`, então funciona — mas vale confirmar. |
-| 9 | ✅ **Sem `__init__.py` no `src/` — resolvido** | [__init__.py](file:///Users/manza/Developer/logs-with-loki/python-api/src/__init__.py) criado — `src/` agora é um pacote regular, eliminando problemas de import em algumas versões do Python. |
-| 10 | ✅ **Dashboard sem panel de DLQ — resolvido** | Adicionados painéis **"DLQ & Errors"** (taxa de erros agregada com `sum(rate(...))`) e **"RabbitMQ Queue Metrics"** (`rabbitmq_queue_messages_ready` por fila via `/metrics/per-object`). |
-| 11 | ✅ **Sem exemplo de `docker-compose.override.yml` — resolvido** | [docker-compose.override.yml.example](file:///Users/manza/Developer/logs-with-loki/docker-compose.override.yml.example) criado (ex.: desativar cAdvisor no macOS). |
 
 ---
 
@@ -205,8 +201,3 @@ Mapeamento dos conceitos que a turma verá neste lab versus conceitos adicionais
 ## 🛠️ Recomendações Prioritárias
 
 > [!IMPORTANT]
-> ✅ **Todos os itens foram resolvidos — laboratório pronto para a aula.**
-
-1. ✅ **Consumer da Work Queue** — criado `task_consumer.py` + serviço `task-consumer`
-2. ✅ **cAdvisor no macOS** — nota "Limitações conhecidas" no README + `docker-compose.override.yml.example`
-3. ✅ **Painel de DLQ/Errors e filas RabbitMQ** — painéis "DLQ & Errors" e "RabbitMQ Queue Metrics" no dashboard
