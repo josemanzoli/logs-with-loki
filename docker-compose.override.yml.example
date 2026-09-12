@@ -1,0 +1,23 @@
+# Este é um exemplo de arquivo docker-compose.override.yml
+# Substitua ou modifique serviços conforme necessário para seu ambiente
+# Para usar este arquivo, renomeie-o para docker-compose.override.yml e o Docker Compose
+# aplicará essas configurações em conjunto com o docker-compose.yml principal
+#
+# IMPORTANTE: Este arquivo é intencionalmente excluído do versionamento via .gitignore
+# para permitir configurações locais personalizadas
+
+services:
+  # Exemplo de como desativar o cAdvisor no macOS (onde ele pode falhar)
+  # cadvisor:
+  #   # Esta configuração efetivamente desativa o serviço substituindo seu comando
+  #   command: ["echo", "cAdvisor desativado no macOS - veja README.md para detalhes"]
+  
+  # Exemplo de como modificar variáveis de ambiente para o api-rest localmente
+  # api-rest:
+  #   environment:
+  #     - LOG_LEVEL=debug
+  
+  # Exemplo de como expor portas adicionais apenas para desenvolvimento local
+  # python-api:
+  #   ports:
+  #     - "5001:5000"  # Porta adicional para acesso direto ao container

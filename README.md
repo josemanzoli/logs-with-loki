@@ -75,13 +75,45 @@ logs-with-loki/
 
 - **[josemanzoli/python-api](https://github.com/josemanzoli/python-api)** — Repositório da aplicação usada neste laboratório. Contém a lógica de negócio, instrumentação OTel e modelos SQL.
 
+## ⚠️ Limitações conhecidas
+
+### cAdvisor no macOS
+Devido às diferenças no funcionamento do Docker Desktop para macOS e Linux, o serviço cAdvisor pode não funcionar corretamente em sistemas macOS. Isso ocorre porque o cAdvisor depende de acesso direto a caminhos do sistema Linux como `/sys`, `/dev/disk` e `/dev/kmsg`, que não estão disponíveis da mesma forma no macOS.
+
+**Impacto**: Métricas de uso de CPU e RAM por container podem não estar disponíveis no painel do Grafana, mas o restante da stack (logs, traces, métricas de aplicação) funciona normalmente.
+
+**Solução para usuários macOS**: Se você está usando macOS e deseja evitar mensagens de erro relacionadas ao cAdvisor, tem duas opções:
+
+1. **Desativar completamente o cAdvisor** (recomendado para focar nos conceitos principais do lab):
+   Crie um arquivo `docker-compose.override.yml` com o seguinte conteúdo:
+   ```yaml
+   services:
+     cadvisor:
+       # Esta substituição de comando efetivamente desativa o serviço
+       command: ["sh", "-c", "echo 'cAdvisor intencionalmente desativado no macOS'; sleep infinity"]
+   ```
+
+2. **Tentar uma configuração mínima** (pode funcionar parcialmente em algumas versões do Docker Desktop):
+   ```yaml
+   services:
+     cadvisor:
+       image: gcr.io/cadvisor/cadvisor:latest
+       container_name: cadvisor
+       ports:
+         - "8080:8080"
+       volumes:
+         - /var/run/docker.sock:/var/run/docker.sock:ro
+         - /var/lib/docker/:/var/lib/docker:ro
+       # Remover mounts problemáticos: /sys, /dev/disk, /dev/kmsg e privileged: true
+   ```
+
+> **Nota**: O foco principal deste laboratório é a observabilidade de aplicação (logs, traces, métricas de negócio). Mesmo sem o cAdvisor, você ainda poderá explorar todos os conceitos centrais usando:
+> - Métricas de aplicação via Prometheus (`http_requests_total`, `messages_published_total`, etc.)
+> - Logs centralizados com Loki e Grafana
+> - Traces distribuídos com Tempo
+> - Health checks e circuit breaker
+
 ## Créditos
-
-Este projeto foi baseado no trabalho original de **Bruno Paz**:
-- Repositório: [brpaz/logs-with-loki](https://github.com/brpaz/logs-with-loki)
-- Artigo: [Better docker logs with Loki](https://brunopaz.dev/blog/better-docker-logs-with-loki)
-
-Modificado e expandido por **Jose Manzoli** com modernização da stack, adição de RabbitMQ, PostgreSQL, Grafana Tempo, OpenTelemetry e exemplos práticos de padrões de microsserviços.
 
 ## License
 
