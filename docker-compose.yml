@@ -148,6 +148,28 @@ services:
     restart: on-failure
     logging: *loki-logging
 
+  task-consumer:
+    build:
+      context: ./python-api
+      dockerfile: Dockerfile
+    command: [ "python", "task_consumer.py" ]
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-admin}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-passw123}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=${POSTGRES_DB:-messages_db}
+      - TEMPO_ENDPOINT=http://tempo:4317
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq/
+      - rabbitmq-log:/var/log/rabbitmq
+    restart: on-failure
+    logging: *loki-logging
+
 volumes:
   grafana-data:
   tempo-data:

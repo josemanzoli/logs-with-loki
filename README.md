@@ -14,7 +14,8 @@ Laboratório de observabilidade e mensageria para uso em aulas de **Arquitetura 
 | **cAdvisor** | Exporta métricas de hardware/CPU/RAM dos containers |
 | **RabbitMQ** | Message broker (comunicação assíncrona) |
 | **Python API** | API REST Flask — produz mensagens e expõe métricas/traces |
-| **Python Consumer** | Worker assíncrono — consome, persiste e gera traces |
+| **Python Consumer** | Worker assíncrono — consome mensagens da fila Pub/Sub, persiste e gera traces |
+| **Python Task Consumer** | Worker assíncrono — consome tarefas da fila Work Queue, processa e gera traces |
 
 ## Pré-requisitos
 
@@ -47,7 +48,7 @@ docker compose up -d
 ## Tópicos cobertos na aula
 
 - **Logs centralizados** com Loki + Promtail + Grafana
-- **Distributed Tracing** com **Grafana Tempo** — rastreie o fluxo completo (API → RabbitMQ → Consumer)
+- **Distributed Tracing** com **Grafana Tempo** — rastreie o fluxo completo (API → RabbitMQ → Consumers de mensagens e tarefas)
 - **Trace-to-Logs** — Pule de um trace no Tempo diretamente para os logs no Loki usando o `correlationId`
 - **Métricas de aplicação** com `prometheus_client` (Flask)
 - **Métricas de infraestrutura** com cAdvisor (CPU/RAM por container)

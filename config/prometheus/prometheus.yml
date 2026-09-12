@@ -5,13 +5,20 @@ scrape_configs:
   - job_name: 'python-api'
     static_configs:
       - targets: ['api-rest:5000']
-  
+   
   - job_name: 'consumers'
     dns_sd_configs:
       - names:
           - 'consumer'
         type: 'A'
         port: 8000
+
+  - job_name: 'task-consumers'
+    dns_sd_configs:
+      - names:
+          - 'task-consumer'
+        type: 'A'
+        port: 8001
 
   - job_name: 'cadvisor'
     static_configs:

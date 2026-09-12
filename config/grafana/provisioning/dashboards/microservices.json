@@ -356,11 +356,137 @@
           "refId": "B"
         }
       ],
-      "interval": "1m",
-      "title": "Consumer Message Throughput",
-      "type": "timeseries"
-    },
-    {
+"interval": "1m",
+       "title": "Consumer Message Throughput",
+       "type": "timeseries"
+     },
+     {
+       "datasource": {
+         "type": "prometheus",
+         "uid": "prometheus"
+       },
+       "fieldConfig": {
+         "defaults": {
+           "color": {
+             "mode": "thresholds"
+           },
+           "thresholds": {
+             "mode": "absolute",
+             "values": [
+               {
+                 "color": "blue",
+                 "value": null
+               },
+               {
+                 "color": "green",
+                 "value": 1
+               }
+             ]
+           },
+           "unit": "none",
+           "mappings": []
+         }
+       },
+       "gridPos": {
+         "h": 8,
+         "w": 6,
+         "x": 0,
+         "y": 8
+       },
+       "id": 28,
+       "options": {
+         "orientation": "auto",
+         "reduceOptions": {
+           "calcs": [
+             "lastNotNull"
+           ],
+           "fields": "",
+           "values": false
+         },
+         "showThresholdLabels": false,
+         "showThresholdMarkers": true
+       },
+       "targets": [
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "prometheus"
+           },
+           "expr": "count(up{job=\"task-consumers\"})",
+           "legendFormat": "Active Task Replicas",
+           "refId": "A"
+         }
+       ],
+       "title": "Task Consumer Replicas",
+       "type": "gauge"
+     },
+     {
+       "datasource": {
+         "type": "prometheus",
+         "uid": "prometheus"
+       },
+       "fieldConfig": {
+         "defaults": {
+           "color": {
+             "mode": "palette-classic"
+           },
+           "custom": {
+             "drawStyle": "line",
+             "fillOpacity": 15,
+             "lineWidth": 2,
+             "showPoints": "auto"
+           },
+           "unit": "short",
+           "mappings": []
+         }
+       },
+       "gridPos": {
+         "h": 8,
+         "w": 18,
+         "x": 6,
+         "y": 8
+       },
+       "id": 29,
+       "options": {
+         "legend": {
+           "calcs": [
+             "sum",
+             "last"
+           ],
+           "displayMode": "table",
+           "placement": "bottom",
+           "showLegend": true
+         },
+         "tooltip": {
+           "mode": "multi",
+           "sort": "none"
+         }
+       },
+       "targets": [
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "prometheus"
+           },
+           "expr": "sum(rate(tasks_processed_total[1m]))",
+           "legendFormat": "Total Task Processing Rate",
+           "refId": "A"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "prometheus"
+           },
+           "expr": "rate(tasks_processed_total[1m])",
+           "legendFormat": "Replica {{instance}}",
+           "refId": "B"
+         }
+       ],
+       "interval": "1m",
+       "title": "Task Consumer Message Throughput",
+       "type": "timeseries"
+     },
+     {
       "collapsed": false,
       "gridPos": {
         "h": 1,
